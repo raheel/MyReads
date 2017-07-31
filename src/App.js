@@ -8,33 +8,16 @@ import ListBooks from "./ListBooks";
 class BooksApp extends React.Component {
   state = {
     query: "",
-    searchResults: [],
     shelves: {
       currentlyReading: [],
       wantToRead: [],
       read: [],
-      none: []
     }
   };
 
   componentDidMount() {
     this.getAllBooks();
   }
-
-  updateQuery = query => {
-    this.setState({ query: query.trim() });
-    this.searchBooks();
-  };
-
-  searchBooks = () => {
-    BooksAPI.search(this.state.query, 100).then(searchResults => {
-      if (Array.isArray(searchResults)) {
-        this.setState({ searchResults });
-      } else {
-        this.setState({ searchResults: [] });
-      }
-    });
-  };
 
   getAllBooks = () => {
     BooksAPI.getAll().then(books => {
@@ -53,17 +36,19 @@ class BooksApp extends React.Component {
     var shelves = this.state.shelves;
     var array = shelves[book.shelf];
 
+  if (array){
     array = array.filter(item => item.id !== book.id);
-
     shelves[book.shelf] = array;
+  }
 
     //book now belongs to new shelf
     BooksAPI.update(book, shelf);    
     book.shelf = shelf;
 
-    if (shelves[shelf].id !== book.id) {
+    if (shelf in shelves && shelves[shelf].id !== book.id) {
       shelves[shelf].push(book);
     }
+
     this.setState({ shelves });
   };
 
@@ -74,9 +59,6 @@ class BooksApp extends React.Component {
           path="/search"
           render={(history) =>
             <SearchBooks 
-              books={this.state.searchResults}
-              updateQuery={this.updateQuery}
-              query={this.state.query}
               changeShelf={this.changeShelf}              
             />}
         />

@@ -1,9 +1,30 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import { BookRow } from "./BookComponents";
+import * as BooksAPI from "./BooksAPI";
 
 class SearchBooks extends Component {
+  state = {
+    query: '',
+    searchResults: [],
+  };
 
+  searchBooks = (query) => {
+    BooksAPI.search(query, 100).then(searchResults => {
+      if (Array.isArray(searchResults)) {
+        this.setState({ searchResults });
+      } else {
+        this.setState({ searchResults: [] });
+      }
+    });
+  };
+
+  updateQuery = query => {
+    this.setState({ query: query.trim()});
+    this.searchBooks(query);
+  };
+
+  
   render() {
 
     return (
@@ -21,13 +42,13 @@ class SearchBooks extends Component {
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
                 <input type="text" placeholder="Search by title or author"
-                value={this.props.query}
-                onChange={event => this.props.updateQuery(event.target.value)}
+                value={this.state.query}
+                onChange={event => this.updateQuery(event.target.value)}
                 />
               </div>
             </div>
             <div className="search-books-results">
-              <BookRow books={this.props.books} {...this.props}/>
+              <BookRow books={this.state.searchResults} {...this.props}/>
             </div>
           </div>
 

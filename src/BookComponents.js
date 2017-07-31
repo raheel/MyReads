@@ -4,8 +4,7 @@ class BookShelf extends Component {
   titles = {
     currentlyReading: "Currently Reading",
     wantToRead: "Want to Read",
-    read: "Read",
-    none: "None"
+    read: "Read"
   };
   render() {
     const { shelves } = this.props;
@@ -17,7 +16,7 @@ class BookShelf extends Component {
           key =>
             shelves[key].length == 0
               ? null
-              : <div>
+              : <div key={key}>
                   <h2 className="bookshelf-title">{this.titles[key]}</h2>
                   <div className="bookshelf-books">
                     <BookRow books={shelves[key]} {...this.props} />
@@ -39,9 +38,8 @@ class BookRow extends Component {
           : <ol className="books-grid">
               {books.map(book =>
                 <BookItem
-                  id={book.id}
                   book={book}
-                  key={book.title}
+                  key={book.id}
                   {...this.props}
                 />
               )}
@@ -70,7 +68,7 @@ class BookItem extends Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url('${imageLinks.thumbnail}')`
+                backgroundImage: `url('${(imageLinks && imageLinks.thumbnail) ? imageLinks.thumbnail : ""}')`
               }}
             />
             <div className="book-shelf-changer">
