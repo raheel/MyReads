@@ -33,6 +33,10 @@ class BooksApp extends React.Component {
   };
 
   changeShelf = (book, shelf) => {
+    if (book.shelf===shelf){
+      return;
+    }
+
     var shelves = this.state.shelves;
     var array = shelves[book.shelf];
 
@@ -59,6 +63,7 @@ class BooksApp extends React.Component {
           path="/search"
           render={(history) =>
             <SearchBooks 
+              shelves={this.state.shelves}
               changeShelf={this.changeShelf}              
             />}
         />

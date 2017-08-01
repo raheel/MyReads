@@ -50,6 +50,22 @@ class BookRow extends Component {
 }
 
 class BookItem extends Component {
+  getShelf = (book) => {
+    if (this.props.idToShelfMapping) {
+       if(book.id in this.props.idToShelfMapping){
+        return this.props.idToShelfMapping[book.id];
+       }
+
+      return "none";     
+    }
+    else
+    if (this.props.book.shelf){
+      return this.props.book.shelf;
+    }
+
+    return "none";
+  }
+
   render() {
     const {
       width,
@@ -57,7 +73,7 @@ class BookItem extends Component {
       imageLinks,
       title,
       authors,
-      shelf
+      publisher
     } = this.props.book;
     return (
       <li>
@@ -73,7 +89,7 @@ class BookItem extends Component {
             />
             <div className="book-shelf-changer">
               <select
-                value={shelf}
+                value={this.getShelf(this.props.book)}
                 onChange={event =>
                   this.props.changeShelf(this.props.book, event.target.value)}
               >
@@ -87,7 +103,7 @@ class BookItem extends Component {
           </div>
           <div className="book-title">{title}</div>
           <div className="book-authors">
-            {authors && authors.length > 0 ? authors[0] : ""}
+            {authors && authors.length > 0 ? authors.join(", ") : publisher}
           </div>
         </div>
 

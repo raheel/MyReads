@@ -7,7 +7,19 @@ class SearchBooks extends Component {
   state = {
     query: '',
     searchResults: [],
+    shelves: [],
+    idToShelfMapping: [],
   };
+
+  createIdToShelfMapping =  () => {
+    let shelves = this.props.shelves;
+    let idToShelfMapping = this.state.idToShelfMapping;
+      for (let shelf of Object.keys(shelves)){
+          for (let book of shelves[shelf]){
+              idToShelfMapping[book.id] = shelf;
+          }
+      }
+  }
 
   searchBooks = (query) => {
     BooksAPI.search(query, 100).then(searchResults => {
@@ -26,7 +38,8 @@ class SearchBooks extends Component {
 
   
   render() {
-
+    console.log('---render shelves', this.state.shelves);
+    this.createIdToShelfMapping();
     return (
           <div className="search-books">
                     
@@ -48,11 +61,9 @@ class SearchBooks extends Component {
               </div>
             </div>
             <div className="search-books-results">
-              <BookRow books={this.state.searchResults} {...this.props}/>
+              <BookRow books={this.state.searchResults} idToShelfMapping={this.state.idToShelfMapping} {...this.props}/>
             </div>
           </div>
-
-
     )
     }
 }
