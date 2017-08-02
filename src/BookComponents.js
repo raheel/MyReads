@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 
-class BookShelf extends Component {
-  titles = {
+const BookShelf = (props) =>  {
+  const titles = {
     currentlyReading: "Currently Reading",
     wantToRead: "Want to Read",
     read: "Read"
   };
-  render() {
-    const { shelves } = this.props;
-    const keys = Object.keys(shelves);
+  
+    let { shelves } = props;
+    let keys = Object.keys(shelves);
 
     return (
       <div className="bookshelf">
@@ -17,20 +17,18 @@ class BookShelf extends Component {
             shelves[key].length == 0
               ? null
               : <div key={key}>
-                  <h2 className="bookshelf-title">{this.titles[key]}</h2>
+                  <h2 className="bookshelf-title">{titles[key]}</h2>
                   <div className="bookshelf-books">
-                    <BookRow books={shelves[key]} {...this.props} />
+                    <BookRow books={shelves[key]} {...props} />
                   </div>
                 </div>
         )}
       </div>
     );
   }
-}
 
-class BookRow extends Component {
-  render() {
-    const { books } = this.props;
+const BookRow = (props) =>  {
+    const { books } = props;
     return (
       <div>
         {books.length < 1
@@ -40,33 +38,34 @@ class BookRow extends Component {
                 <BookItem
                   book={book}
                   key={book.id}
-                  {...this.props}
+                  {...props}
                 />
               )}
-            </ol>}
+            </ol>
+            }
       </div>
     );
   }
-}
 
-class BookItem extends Component {
-  getShelf = (book) => {
-    if (this.props.idToShelfMapping) {
-       if(book.id in this.props.idToShelfMapping){
-        return this.props.idToShelfMapping[book.id];
+const BookItem = (props) =>  {
+  const getShelf = (book) => {
+    if (props.idToShelfMapping) {
+       if(book.id in props.idToShelfMapping){
+        let shelf = props.idToShelfMapping[book.id];
+        book.shelf = shelf;
+        return shelf;
        }
 
       return "none";     
     }
     else
-    if (this.props.book.shelf){
-      return this.props.book.shelf;
+    if (props.book.shelf){
+      return props.book.shelf;
     }
 
     return "none";
   }
 
-  render() {
     const {
       width,
       height,
@@ -74,7 +73,8 @@ class BookItem extends Component {
       title,
       authors,
       publisher
-    } = this.props.book;
+    } = props.book;
+
     return (
       <li>
         <div className="book">
@@ -89,9 +89,9 @@ class BookItem extends Component {
             />
             <div className="book-shelf-changer">
               <select
-                value={this.getShelf(this.props.book)}
+                value={getShelf(props.book)}
                 onChange={event =>
-                  this.props.changeShelf(this.props.book, event.target.value)}
+                  props.changeShelf(props.book, event.target.value)}
               >
                 <option value="none" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
@@ -110,6 +110,5 @@ class BookItem extends Component {
       </li>
     );
   }
-}
 
 export { BookShelf, BookRow, BookItem };
